@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generate Horus QR — City Plaza</title>
+  <style>
+    body{
+      font-family: "Trebuchet MS", sans-serif;
+      background:#0b0b0b; color:#fff; display:flex;
+      align-items:center; justify-content:center; min-height:100vh; margin:0;
+    }
+    .card{
+      background: #0f1720; padding:24px; border-radius:12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6); width:100%; max-width:820px;
+    }
+    h1{color:#ffd66b; margin:0 0 8px 0; font-size:20px;}
+    label{display:block; margin-top:12px; color:#cfd8dc;}
+    input[type="text"], select{
+      width:100%; padding:10px; margin-top:6px; border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06); background:#071018; color:#fff;
+    }
+    .row{display:flex; gap:12px; margin-top:12px;}
+    button{
+      background:#ffd66b; border:0; padding:10px 16px; border-radius:8px;
+      font-weight:700; cursor:pointer;
+    }
+    .preview{
+      margin-top:18px; display:flex; gap:18px; align-items:center; justify-content:center;
+      flex-wrap:wrap;
+    }
+    .qr-wrap{background:#fff; padding:12px; border-radius:10px;}
+    canvas{display:block; max-width:100%;}
+    small{color:#9aa4a6; display:block; margin-top:8px;}
+  </style>
+  <!-- QRCode library (lightweight) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="card" role="main">
+    <h1>Horus QR Generator — City Plaza</h1>
+    <label>Link (الرابط الذي سيقود إليه الـ QR):</label>
+    <input id="inputUrl" type="text" value="https://city-plaza-hotel777.vercel.app/" />
+
+    <div class="row">
+      <div style="flex:1">
+        <label>Size (px):</label>
+        <input id="size" type="text" value="800" />
+      </div>
+      <div style="width:170px">
+        <label>Horus overlay (مسار الصورة):</label>
+        <input id="overlayPath" type="text" value="assets/horus.png" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="generate">Generate QR</button>
+      <button id="download" style="background:#4aa3ff;color:#fff">Download PNG</button>
+      <button id="downloadSvg" style="background:#6ee7b7;color:#000">Download SVG</button>
+    </div>
+
+    <div class="preview">
+      <div class="qr-wrap" id="qrContainer">
+        <!-- canvas will be injected here -->
+      </div>
+      <div style="max-width:320px; text-align:left;">
+        <small>Notes:</small>
+        <ul style="color:#c1c9cc">
+          <li>Use error correction = H so overlay won't break QR readability.</li>
+          <li>For printing, set Size ≥ 800 px and download PNG at 300 DPI when printing.</li>
+          <li>If overlay too large -> reduce overlay size (we set it to 22% of QR by default).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const generateBtn = document.getElementById('generate');
+  const downloadBtn = document.getElementById('download');
+  const downloadSvgBtn = document.getElementById('downloadSvg');
+  const container = document.getElementById('qrContainer');
+
+  async function renderQR() {
+    const url = document.getElementById('inputUrl').value.trim();
+    const size = parseInt(document.getElementById('size').value) || 800;
+    const overlayPath = document.getElementById('overlayPath').value || 'assets/horus.png';
+
+    // clear
+    container.innerHTML = '';
+
+    // create canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    container.appendChild(canvas);
+
+    // generate QR on canvas with error correction H
+    await QRCode.toCanvas(canvas, url, {
+      errorCorrectionLevel: 'H',
+      margin: 1,
+      width: size,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      }
+    });
+
+    // load overlay image
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = overlayPath;
+
+    img.onload = () => {
+      const ctx = canvas.getContext('2d');
+
+      // compute overlay size (22% of QR width) — safe but adjustable
+      const overlaySize = Math.floor(size * 0.22);
+      const x = Math.floor((size - overlaySize) / 2);
+      const y = x;
+
+      // optional: draw white rounded background under overlay (improves contrast)
+      const radius = 14;
+      ctx.fillStyle = '#ffffff';
+      roundRect(ctx, x - 8, y - 8, overlaySize + 16, overlaySize + 16, radius);
+      ctx.fill();
+
+      // draw overlay image centered
+      ctx.drawImage(img, x, y, overlaySize, overlaySize);
+    };
+
+    img.onerror = () => {
+      console.warn('Overlay image not found or blocked. QR generated without overlay.');
+    };
+
+    // return canvas for downloading
+    return canvas;
+  }
+
+  // utility: rounded rect path
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  generateBtn.addEventListener('click', async () => {
+    await renderQR();
+  });
+
+  downloadBtn.addEventListener('click', async () => {
+    const canvas = container.querySelector('canvas') || await renderQR();
+    // download PNG
+    const link = document.createElement('a');
+    link.download = 'city-plaza-horus-qr.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  downloadSvgBtn.addEventListener('click', async () => {
+    // create SVG via QRCode.toString with type svg
+    const url = document.getElementById('inputUrl').value.trim();
+    const overlayPath = document.getElementById('overlayPath').value || 'assets/horus.png';
+    const size = parseInt(document.getElementById('size').value) || 800;
+
+    QRCode.toString(url, { type: 'svg', errorCorrectionLevel: 'H', margin: 1 }, function (err, svgString) {
+      if (err) { console.error(err); return; }
+      // embed overlay image as foreignObject or image tag — simpler: append <image> at center
+      // compute overlay placement in px relative to size and margin  (we assume viewBox square)
+      const overlaySize = Math.floor(size * 0.22);
+      const x = Math.floor((size - overlaySize) / 2);
+      const y = x;
+      // insert image tag before closing svg
+      const insertPos = svgString.lastIndexOf('</svg>');
+      const imgTag = `<image href="${overlayPath}" x="${x}" y="${y}" width="${overlaySize}" height="${overlaySize}" />`;
+      const finalSvg = svgString.slice(0, insertPos) + imgTag + svgString.slice(insertPos);
+      // download
+      const blob = new Blob([finalSvg], { type: 'image/svg+xml;charset=utf-8' });
+      const urlBlob = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = urlBlob;
+      link.download = 'city-plaza-horus-qr.svg';
+      link.click();
+      URL.revokeObjectURL(urlBlob);
+    });
+  });
+
+  // generate initial
+  window.addEventListener('load', () => { renderQR(); });
+</script>
+</body>
+</html>

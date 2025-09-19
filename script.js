@@ -1,17 +1,33 @@
 
-document.addEventListener('scroll', () => {
-  const cards = document.querySelectorAll('.card');
-  cards.forEach(card => {
-    const rect = card.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 100) {
-      card.style.opacity = 1;
-      card.style.transform = 'translateY(0)';
-    }
-  });
-});
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const chatBox = document.getElementById("chatBox");
 
-document.querySelectorAll('.card').forEach(card => {
-  card.style.opacity = 0;
-  card.style.transform = 'translateY(50px)';
-  card.style.transition = 'all 0.6s ease-out';
-});
+  const userMsg = input.value.trim();
+  if (!userMsg) return;
+
+  // عرض رسالة المستخدم
+  const userDiv = document.createElement("div");
+  userDiv.textContent = "👤 " + userMsg;
+  chatBox.appendChild(userDiv);
+
+  input.value = "";
+
+  // طلب من API (ممكن يكون Vercel API endpoint)
+  try {
+    const res = await fetch("/api/hello", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userMsg })
+    });
+    const data = await res.json();
+
+    const botDiv = document.createElement("div");
+    botDiv.textContent = "🤖 " + data.reply;
+    chatBox.appendChild(botDiv);
+  } catch (err) {
+    const botDiv = document.createElement("div");
+    botDiv.textContent = "⚠️ خطأ بالاتصال";
+    chatBox.appendChild(botDiv);
+  }
+}

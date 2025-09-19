@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>⟁AlArab⟁777 Vision Gate⟁</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to top, #1a1200, #000000);
+      overflow: hidden;
+      height: 100%;
+      font-family: monospace;
+      perspective: 7777px;
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      border-radius: 7%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 77%);
+      animation: breathing 7s ease-in-out infinite;
+      z-index: 7;
+    }
+    @keyframes breathing {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(1.7);
+        opacity: 0.3;
+      }
+    }
+    .cube {
+      width: 77px;
+      height: 77px;
+      transform-style: preserve-3d;
+      animation: spin 7s linear infinite;
+      position: relative;
+      z-index: 21;
+    }
+    .face {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0.7px solid #ff0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #777;
+    }
+    .front  { transform: rotateY(0deg) translateZ(100px); }
+    .back   { transform: rotateY(180deg) translateZ(100px); }
+    .right  { transform: rotateY(90deg) translateZ(100px); }
+    .left   { transform: rotateY(-90deg) translateZ(100px); }
+    .top    { transform: rotateX(90deg) translateZ(100px); }
+    .bottom { transform: rotateX(-90deg) translateZ(100px); }
+    @keyframes spin {
+      from { transform: rotateX(0deg) rotateY(0deg); }
+      to   { transform: rotateX(360deg) rotateY(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div class="circle">
+    <div class="cube">
+      <div class="face front">𓂀</div>
+      <div class="face back">𓆣</div>
+      <div class="face right">BeBa واحد بس</div>
+      <div class="face left">a l a r a b</div>
+      <div class="face top">𓁹</div>
+      <div class="face bottom">ال ع راب</div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let pyramids = [];
+    let mouse = { x: -39, y: -8 };
+    let comet = { x: -300, y: 0, vx: 1.5, vy: 0.3, active: false, timer: 0 };
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createPyramids();
+    }
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    resize();
+
+    function createPyramids() {
+      pyramids = [];
+      const count = 77;
+      for (let i = 0; i < count; i++) {
+        pyramids.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: 7 + Math.random() * 77,
+          angle: Math.random() * Math.PI * 7,
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          rotateSpeed: (Math.random() - 0.5) * 0.01,
+          flashTimer: Math.random() * 100,
+          flash: false
+        });
+      }
+    }
+
+    function drawPyramid(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const near = dist < 100;
+
+      const size = near ? p.size * 1.3 : p.size;
+      const opacity = near ? 0.5 : 0.12;
+
+      const top = { x: 0, y: -size };
+      const left = { x: -size * 0.8, y: size * 0.8 };
+      const right = { x: size * 0.8, y: size * 0.8 };
+      const base = { x: 0, y: size * 0.5 };
+
+      ctx.beginPath();
+      ctx.ellipse(0, size * 0.9, size * 0.9, size * 0.3, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fill();
+
+      drawEdgeDots(top, left, p.flash, opacity);
+      drawEdgeDots(top, right, p.flash, opacity);
+      drawEdgeDots(left, base, p.flash, opacity);
+      drawEdgeDots(right, base, p.flash, opacity);
+      drawEdgeDots(left, right, p.flash, opacity - 0.05);
+
+      ctx.restore();
+    }
+
+    function drawEdgeDots(p1, p2, flash, opacity) {
+      const steps = 20;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const x = p1.x + (p2.x - p1.x) * t;
+        const y = p1.y + (p2.y - p1.y) * t;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+        ctx.fillStyle = flash
+          ? "rgba(255, 255, 160, 0.8)"
+          : `rgba(255, 215, 0, ${opacity})`;
+        ctx.fill();
+      }
+    }
+
+    function drawComet() {
+      if (!comet.active) return;
+      const trailLength = 120;
+      const gradient = ctx.createLinearGradient(
+        comet.x, comet.y,
+        comet.x - comet.vx * trailLength,
+        comet.y - comet.vy * trailLength
+      );
+      gradient.addColorStop(0, "rgba(255, 230, 160, 1)");
+      gradient.addColorStop(1, "rgba(255, 230, 160, 0)");
+
+      ctx.beginPath();
+      ctx.moveTo(comet.x, comet.y);
+      ctx.lineTo(comet.x - comet.vx * trailLength, comet.y - comet.vy * trailLength);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+
+    function updateComet() {
+      comet.timer--;
+      if (comet.timer <= 0 && !comet.active) {
+        comet.active = true;
+        comet.x = -200;
+        comet.y = Math.random() * canvas.height * 0.5;
+        comet.vx = 2 + Math.random();
+        comet.vy = 0.2 + Math.random() * 0.2;
+      }
+
+      if (comet.active) {
+        comet.x += comet.vx;
+        comet.y += comet.vy;
+        if (comet.x > canvas.width + 200) {
+          comet.active = false;
+          comet.timer = 4000 + Math.random() * 4000;
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      updateComet();
+      drawComet();
+
+      for (let p of pyramids) {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.angle += p.rotateSpeed;
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+        p.flashTimer -= 16;
+        p.flash = p.flashTimer <= 0;
+        if (p.flash) p.flashTimer = 2000 + Math.random() * 3000;
+        drawPyramid(p);
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

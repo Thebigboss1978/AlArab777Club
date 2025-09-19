@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AlArab Club Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background-color: #002b21;
+      color: #eac676;
+    }
+
+    header {
+      background-color: #00352a;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #eac676;
+    }
+
+    h1 {
+      font-size: 32px;
+      letter-spacing: 2px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #01382d;
+      border: 1px solid #eac676;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #eac676;
+      border-radius: 5px;
+      background-color: #002b21;
+      color: #eac676;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: #eac676;
+      color: #002b21;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+
+    button:hover {
+      background-color: #f0d187;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AlArab Club — Booking Form</h1>
+  </header>
+
+  <div class="container">
+    <form>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" placeholder="Enter your name">
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email">
+
+      <label for="date">Preferred Date</label>
+      <input type="date" id="date" name="date">
+
+      <label for="tour">Select Tour</label>
+      <select id="tour" name="tour">
+        <option value="pyramids">Pyramids Safari</option>
+        <option value="camels">Camel Ride Adventure</option>
+        <option value="vip">VIP Spiritual Tour</option>
+      </select>
+
+      <label for="notes">Special Requests</label>
+      <textarea id="notes" name="notes" rows="4" placeholder="Write anything we should know..."></textarea>
+
+      <button type="submit">Book Now</button>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2025 AlArab Club 777 – Designed by the Pharaoh System
+  </footer>
+</body>
+</html>

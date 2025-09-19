@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>𓂀 بوابة الاستيقاظ | العرّاب</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0; padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 100%;
+        height: 100%;
+        background: black;
+        overflow: hidden;
+        font-family: monospace;
+        position: relative;
+        color: #0f0;
+      }
+
+      .char-stream {
+        position: absolute;
+        white-space: nowrap;
+        opacity: 0.4;
+        font-size: 14px;
+        animation: move linear infinite;
+      }
+
+      @keyframes fall    {
+        0%   { transform: translateY(-10%); }
+        100% { transform: translateY(110%); }
+      }
+      @keyframes rise    {
+        0%   { transform: translateY(110%); }
+        100% { transform: translateY(-10%); }
+      }
+      @keyframes left    {
+        0%   { transform: translateX(110%); }
+        100% { transform: translateX(-10%); }
+      }
+      @keyframes right   {
+        0%   { transform: translateX(-10%); }
+        100% { transform: translateX(110%); }
+      }
+
+      .center-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #0f0;
+        font-size: 1.8rem;
+        text-align: center;
+        z-index: 10;
+        animation: pulse 5s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center-message">marhaba<br />egypt awakening<br />𓂀 𓆣𓂀</div>
+
+    <script>
+      const extra = "ALARABCLUBAbuElAbedSharifhawisH";
+      const base = "ع$&@؟!()؛:-/.،~٪؜^*#{}[]\\|𓂀𓆣";
+      const chars = (base + extra).split('');
+      const directions = ['fall', 'rise', 'left', 'right'];
+
+      function randomChar() {
+        return chars[Math.floor(Math.random() * chars.length)];
+      }
+
+      function randomDir() {
+        return directions[Math.floor(Math.random() * directions.length)];
+      }
+
+      function spawnStream() {
+        const el = document.createElement('div');
+        el.className = 'char-stream';
+
+        const length = Math.floor(Math.random() * 20 + 5);
+        el.textContent = Array.from({ length }, randomChar).join('');
+
+        el.style.left = Math.random() * window.innerWidth + 'px';
+        el.style.top = Math.random() * window.innerHeight + 'px';
+        el.style.fontSize = Math.floor(Math.random() * 16 + 8) + 'px';
+        el.style.animationName = randomDir();
+        el.style.animationDuration = (Math.random() * 10 + 4) + 's';
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 15000);
+      }
+
+      let loop = setInterval(spawnStream, 100);
+
+      window.addEventListener('click', () => clearInterval(loop));
+      window.addEventListener('keydown', () => clearInterval(loop));
+    </script>
+  </body>
+</html>

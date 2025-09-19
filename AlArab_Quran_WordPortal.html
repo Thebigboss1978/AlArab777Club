@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بوابة العرّاب – خلق الكلمات من القرآن</title>
+  <style>
+    body {
+      background: radial-gradient(circle, #000000, #111111);
+      color: #00ffcc;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    input {
+      width: 80%;
+      padding: 1rem;
+      font-size: 1.2rem;
+      text-align: center;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      background: #222;
+      color: #0f0;
+    }
+    #answerZone {
+      font-size: 1.5rem;
+      text-align: center;
+      line-height: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <input id="questionInput" placeholder="اكتب سؤالك هنا ثم اضغط Enter..." />
+  <div id="answerZone">✶ في انتظار سؤالك...</div>
+
+  <script>
+    let wordPool = [];
+
+    fetch('https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/quran.json')
+      .then(res => res.json())
+      .then(quran => {
+        const words = quran.map(a => a.text.split(/\s+/)).flat();
+        wordPool = Array.from(new Set(words.filter(w => w.length > 2)));
+      });
+
+    function generateAnswer() {
+      const starters = [
+        "الجواب يكمن في", "حين تسأل، تجد", "ابحث في", "الطريق يبدأ من", "لا تنسَ", "حين ترى", "السر هو"
+      ];
+      const w1 = wordPool[Math.floor(Math.random() * wordPool.length)];
+      const w2 = wordPool[Math.floor(Math.random() * wordPool.length)];
+      const start = starters[Math.floor(Math.random() * starters.length)];
+      return `${start} ${w1} ${w2}`;
+    }
+
+    const input = document.getElementById('questionInput');
+    const output = document.getElementById('answerZone');
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && wordPool.length > 0) {
+        const response = generateAnswer();
+        output.textContent = response;
+        input.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

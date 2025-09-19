@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>AlArab Deployment Status</title>
+  <style>
+    body { background: #111; color: #0f0; font-family: monospace; padding: 2em; direction: rtl; }
+    .step { margin-bottom: 10px; }
+    .status { font-weight: bold; }
+    .done { color: #0f0; }
+    .loading { color: yellow; animation: blink 1s infinite; }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <h2>🚀 حالة تنفيذ أوامر العرّاب</h2>
+  <div class="step" id="step1">🛠️ إنشاء الملفات... <span class="status loading">جاري</span></div>
+  <div class="step" id="step2">📦 ضغط وتجهيز المشروع... <span class="status">في الانتظار</span></div>
+  <div class="step" id="step3">☁️ النشر الخارجي... <span class="status">في الانتظار</span></div>
+  <div class="step" id="step4">✅ اختبار الوظائف... <span class="status">في الانتظار</span></div>
+  <div class="step" id="step5">📡 إخطار بالرابط... <span class="status">في الانتظار</span></div>
+
+  <script>
+    const steps = [
+      {{ id: "step1", delay: 2000 }},
+      {{ id: "step2", delay: 1500 }},
+      {{ id: "step3", delay: 3000 }},
+      {{ id: "step4", delay: 1500 }},
+      {{ id: "step5", delay: 1000 }},
+    ];
+
+    async function runSteps() {{
+      for (const step of steps) {{
+        const el = document.getElementById(step.id);
+        const status = el.querySelector('.status');
+        status.classList.remove('loading');
+        status.textContent = '✅ تم';
+        status.classList.add('done');
+        const nextStep = steps[steps.indexOf(step)+1];
+        if (nextStep) {{
+          const nextEl = document.getElementById(nextStep.id);
+          const nextStatus = nextEl.querySelector('.status');
+          nextStatus.textContent = '⏳ جاري...';
+          nextStatus.classList.add('loading');
+        }}
+        await new Promise(r => setTimeout(r, step.delay));
+      }}
+    }}
+
+    runSteps();
+  </script>
+</body>
+</html>

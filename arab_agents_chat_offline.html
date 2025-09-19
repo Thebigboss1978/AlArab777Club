@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شات العرّاب – مجموعة Agents</title>
+<style>
+  body { font-family: Arial; background:#111; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  #chat { width:500px; height:500px; background:#222; padding:10px; display:flex; flex-direction:column; border-radius:10px; }
+  #messages { flex:1; overflow-y:auto; margin-bottom:10px; }
+  #input { display:flex; }
+  #input input { flex:1; padding:10px; border:none; outline:none; border-radius:5px 0 0 5px; }
+  #input button { padding:10px; background:#ff0; border:none; cursor:pointer; border-radius:0 5px 5px 0; font-weight:bold; }
+  .msg { margin:5px 0; }
+  .user { color:#0f0; }
+  .agent1 { color:#0ff; }
+  .agent2 { color:#f0f; }
+  .agent3 { color:#ff5500; }
+</style>
+</head>
+<body>
+<div id="chat">
+  <div id="messages"></div>
+  <div id="input">
+    <input id="text" placeholder="اكتب هنا..." autofocus>
+    <button onclick="sendMessage()">ارسال</button>
+  </div>
+</div>
+
+<script>
+// اسماء الAgents
+const agents = ['agent1', 'agent2', 'agent3'];
+
+function sendMessage() {
+  const input = document.getElementById('text');
+  const msg = input.value.trim();
+  if(!msg) return;
+  appendMessage('user', msg);
+  input.value = '';
+
+  // كل Agent يرد بعد وقت قصير مختلف
+  agents.forEach((agent, i) => {
+    setTimeout(() => {
+      const reply = generateAgentReply(agent, msg);
+      appendMessage(agent, reply);
+    }, 300 + i*400);
+  });
+}
+
+function appendMessage(who, text) {
+  const messages = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+// ردود ديناميكية لكل Agent
+function generateAgentReply(agent, msg) {
+  const dynamic = msg.split('').reverse().join(''); // ديناميكي
+  return `${agent.toUpperCase()}: ${dynamic} | طول: ${msg.length}`;
+}
+</script>
+</body>
+</html>
